@@ -21,7 +21,6 @@
         <property name="locations">
             <list>
 				<value>classpath:${env}/important.properties</value>
-                <value>classpath:${env}/b2btenant.properties</value>
                 <value>classpath:${env}/jmq.properties</value>
                 <value>classpath:ev-domain.properties</value>
             </list>

@@ -9,7 +9,6 @@ public class StreamDemo {
 
     public static void main(String agrs[]){
         try {
-
             StringBuffer str = new StringBuffer();
             char[] buf = new char[1024];
             FileReader f = new FileReader("file");
