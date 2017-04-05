@@ -1,0 +1,240 @@
+#** 自定义的分页指令。
+ 属性说明：
+ page      当前页号(int类型)
+ pageSize    每页要显示的记录数(int类型)
+ toURL       点击分页标签时要跳转到的目标URL(string类型)
+ totalNumber 总记录数(int类型)
+ 使用方式：
+ #if totalNumber
+ <#import "/pager.vm" as q>
+ <@q.pager page=page pageSize=pageSize totalNumber=totalNumber url="testpager.do"/>
+ #end
+ *#
+
+#macro (pager $page $pageSize $totalNumber $url $busType)
+#** 定义局部变量pageCount保存总页数 *#
+    #set ($pageCount=(($totalNumber + $pageSize - 1) / $pageSize))
+    #if ($totalNumber>0)
+    #** 输出分页样式 *#
+
+    #** 页号越界处理 *#
+        #if ($page > $pageCount)
+            #set ($page = $pageCount)
+        #end
+        #if ($page < 1)
+            #set ($page = 1)
+        #end
+    #** 输出分页表单 *#
+    <div class="pagination">
+        <div class="fn-right">
+
+        #** 把请求中的所有参数当作隐藏表单域(无法解决一个参数对应多个值的情况) *#
+            #foreach($key in $params.getAll().keySet())
+                #if ($key != "page" && $params.get($key))
+                    <input type="hidden" name="${key}" value="$params.get($key)"/>
+                #end
+            #end
+
+        #** 上一页处理 *#
+            #if ($page == 1)
+                <span class="disabled">上一页</span>
+            #else
+                <a href="javascript:void(0)" onclick="gotoPage($page - 1)">上一页</a>
+            #end
+        #** 如果前面页数过多,显示... *#
+            #set ($start=1)
+            #if ($page > 4)
+                #set ($start=($page - 1))
+                <a href="javascript:void(0)" onclick="gotoPage(1)">1</a>
+                <a href="javascript:void(0)" onclick="gotoPage(2)">2</a>
+                <span style="color: #ccc;"><b>…</b></span>
+            #end
+        #** 显示当前页号和它附近的页号 *#
+            #set ($end=($page + 1))
+            #if ($end > $pageCount)
+                #set ($end = $pageCount)
+            #end
+            #foreach ($i in [$start..$end])
+                #if ($page == $i)
+                    <a href="javascript:void(0)" class="cur">$i</a>
+                #else
+                    <a href="javascript:void(0)" onclick="gotoPage($i)">$i</a>
+                #end
+            #end
+        #** 如果后面页数过多,显示... *#
+            #if ($end < $pageCount - 2)
+                <span style="color: #ccc;"><b>…</b></span>
+            #end
+            #if ($end < $pageCount - 1)
+                #set( $vPageNo = $pageCount - 1 )
+                <a href="javascript:void(0)" onclick="gotoPage($vPageNo)">$vPageNo</a>
+            #end
+            #if ($end < $pageCount)
+                <a href="javascript:void(0)" onclick="gotoPage($pageCount)">$pageCount</a>
+            #end
+        #** 下一页处理 *#
+            #if ($page == $pageCount)
+                <span class="disabled">下一页</span>
+            #else
+                #set( $vPageNo = $page + 1 )
+                <a href="javascript:void(0)" class="unable" onclick="gotoPage($vPageNo)">下一页</a>
+            #end
+            <script language="javascript">
+                function gotoPage(no) {
+                    if (no >$pageCount) {
+                        no =$pageCount;
+                    }
+                    if (no < 1) {
+                        no = 1;
+                    }
+                    //$busType 业务分页场景 1:商品列表分页   2：公告列表分页  3.采购频道 4.供应商搜索
+                    if($busType == 1){
+                        $("#hid_item_page").val(no);
+                        $("#hid_keyword").val(jQuery.trim($("#txt_keyword").val()));
+                        $("#item_list_form").attr("action", "$url");
+                        $("#item_list_form").submit();
+                    } else if($busType == 2) {
+                        $("#tx_page").val(no);
+                        $("#form_search").submit();
+                    } else if($busType == 3) {
+                        queryPurchaseData(no);
+                    }else if($busType == 4){
+                        $("#hid_page").val(no);
+                        $("#hid_keyword").val(jQuery.trim($("#txt_keyword").val()));
+                        $("#provider_list_form").attr("action", "$url");
+                        $("#provider_list_form").submit();
+                    }
+                }
+            </script>
+        </div>
+    </div>
+
+ #end
+#end
+#macro (simplepaging $page $pageSize $totalNumber $url $busType)
+#** 定义局部变量pageCount保存总页数 *#
+    #set ($pageCount=(($totalNumber + $pageSize - 1) / $pageSize))
+    #if ($totalNumber>0)
+
+    #** 输出分页样式 *#
+
+    #** 页号越界处理 *#
+        #if ($page > $pageCount)
+            #set ($page = $pageCount)
+        #end
+        #if ($page < 1)
+            #set ($page = 1)
+        #end
+    #** 输出分页表单 *#
+   #**<div class="pagination pagination02">*#
+        #**<div class="fn-right">*#
+        <div class="f-pages">
+         ####<span><font>$page</font>/ $pageCount</span>
+        #** 上一页处理 *#
+            #if ($page == 1)
+                ####<span class="prev-disable">上一页</span>
+                <a href="javascript:void(0)" class="prev-disable">上一页</a>
+            #else
+                <a href="javascript:void(0)" class="prev" onclick="gotoPage($page - 1)">上一页</a>
+            #end
+            <span><b>$page</b>/$pageCount</span>
+        #** 下一页处理 *#
+            #if ($page == $pageCount)
+                 ####<span class="prev-disable">下一页</span>
+                 <a href="javascript:void(0)" class="next-disable">下一页</a>
+            #else
+                #set( $vPageNo = $page + 1 )
+                <a href="javascript:void(0)" class="next" onclick="gotoPage($vPageNo)">下一页</a>
+            #end
+        #**</div> *#
+    #**</div> *#
+    </div>
+    #end
+
+#end
+
+
+#macro (pageUtil $page $pageSize $totalNumber $url)
+#** 定义局部变量pageCount保存总页数 *#
+    #set ($pageCount=(($totalNumber + $pageSize - 1) / $pageSize))
+    #if ($totalNumber>0)
+    #** 输出分页样式 *#
+
+    #** 页号越界处理 *#
+        #if ($page > $pageCount)
+            #set ($page = $pageCount)
+        #end
+        #if ($page < 1)
+            #set ($page = 1)
+        #end
+    #** 输出分页表单 *#
+    <div class="pagination">
+        <div class="fn-right">
+
+        #** 把请求中的所有参数当作隐藏表单域(无法解决一个参数对应多个值的情况) *#
+            #foreach($key in $params.getAll().keySet())
+                #if ($key != "page" && $params.get($key))
+                    <input type="hidden" name="${key}" value="$params.get($key)"/>
+                #end
+            #end
+
+        #** 上一页处理 *#
+            #if ($page == 1)
+                <span class="disabled">上一页</span>
+            #else
+                <a href="javascript:void(0)" onclick="gotoPage($page - 1)">上一页</a>
+            #end
+        #** 如果前面页数过多,显示... *#
+            #set ($start=1)
+            #if ($page > 4)
+                #set ($start=($page - 1))
+                <a href="javascript:void(0)" onclick="gotoPage(1)">1</a>
+                <a href="javascript:void(0)" onclick="gotoPage(2)">2</a>
+                <span style="color: #ccc;"><b>…</b></span>
+            #end
+        #** 显示当前页号和它附近的页号 *#
+            #set ($end=($page + 1))
+            #if ($end > $pageCount)
+                #set ($end = $pageCount)
+            #end
+            #foreach ($i in [$start..$end])
+                #if ($page == $i)
+                    <a href="javascript:void(0)" class="cur">$i</a>
+                #else
+                    <a href="javascript:void(0)" onclick="gotoPage($i)">$i</a>
+                #end
+            #end
+        #** 如果后面页数过多,显示... *#
+            #if ($end < $pageCount - 2)
+                <span style="color: #ccc;"><b>…</b></span>
+            #end
+            #if ($end < $pageCount - 1)
+                #set( $vPageNo = $pageCount - 1 )
+                <a href="javascript:void(0)" onclick="gotoPage($vPageNo)">$vPageNo</a>
+            #end
+            #if ($end < $pageCount)
+                <a href="javascript:void(0)" onclick="gotoPage($pageCount)">$pageCount</a>
+            #end
+        #** 下一页处理 *#
+            #if ($page == $pageCount)
+                <span class="disabled">下一页</span>
+            #else
+                #set( $vPageNo = $page + 1 )
+                <a href="javascript:void(0)" class="unable" onclick="gotoPage($vPageNo)">下一页</a>
+            #end
+            <script type="text/javascript">
+                function gotoPage(no) {
+                    if (no >$pageCount) {
+                        no =$pageCount;
+                    }
+                    if (no < 1) {
+                        no = 1;
+                    }
+                    customMadePlatCats.pageByRule("$url",no);
+                }
+            </script>
+        </div>
+    </div>
+
+ #end
+#end
