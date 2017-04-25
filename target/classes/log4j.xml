@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="conversionPattern" value="%d{yyyy-MMM-dd HH:mm:ss.SSS} - [%7r] - [%6p] - [%t] - [%C:%M] - %m%n" />
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="levelMin" value="INFO" />
+        </filter>
+    </appender>
+
+    <appender name="FILE-LOG" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="datePattern" value="'.'yyyy-MM-dd"/>
+        <param name="append" value="true"/>
+        <param name="file" value="E:/log4j/file-log4j.log"/>
+        <param name="encoding" value="UTF-8"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="conversionPattern"
+                   value="%d{yyyy-MMM-dd HH:mm:ss.SSS} - [%7r] - [%6p] - [%t] - [%C:%M] - %m%n"/>
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="levelMin" value="INFO"/>
+            <param name="levelMax" value="WARN"/>
+        </filter>
+    </appender>
+
+    <appender name="FILE-TEST-LOG" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="datePattern" value="'.'yyyy-MM-dd"/>
+        <param name="append" value="true"/>
+        <param name="file" value="E:/log4j/file-test-log4j.log"/>
+        <param name="encoding" value="UTF-8"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="conversionPattern"
+                   value="%d{yyyy-MMM-dd HH:mm:ss.SSS} - [%7r] - [%6p] - [%t] - [%C:%M] - %m%n"/>
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="levelMin" value="INFO"/>
+            <param name="levelMax" value="WARN"/>
+        </filter>
+    </appender>
+
+    <logger name="com.huangye.training.demo.Log4j" additivity="false">
+        <appender-ref ref="FILE-LOG" />
+    </logger>
+
+    <logger name="com.huangye.training.demo.LoggerFactory" additivity="false">
+        <appender-ref ref="FILE-TEST-LOG" />
+    </logger>
+
+    <root>
+        <priority value="debug"/>
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE-TEST-LOG" />
+    </root>
+
+</log4j:configuration>
