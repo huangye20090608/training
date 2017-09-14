@@ -1,47 +1,34 @@
 package com.huangye.training.demo.Thread;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by huangye on 2017/4/11.
  */
 public class ThreadLocalDemo {
-    private static ThreadLocal<Long> platformId = new ThreadLocal<Long>();
-    private static ThreadLocal<Long> domainGroupId = new ThreadLocal<Long>();
 
-    public static void setPlatformId(Long pid) {
-        platformId.set(pid);
-    }
+    public static void main(String args[]) throws InterruptedException {
+        LinkedList<String> queue = new LinkedList<String>();
+        ReentrantLock lock = new ReentrantLock();
+        Condition notFull = lock.newCondition();
+        Condition notEmpty = lock.newCondition();
 
-    public static Long getPlatformId() {
-        return platformId.get();
-    }
-
-    public static Long getDomainGroupId() {
-        return domainGroupId.get();
-    }
-
-    public static void setDomainGroupId(Long dgid) {
-        domainGroupId.set(dgid);
-    }
-
-    public static void main(String agrs[]){
-
-        //platformId.remove();
-        //ThreadLocalDemo.setPlatformId(123456781L);
-        //System.out.print(ThreadLocalDemo.getPlatformId());
-        Object obj = new Object();
-        List<Long> list = new ArrayList<Long>();
-        list = null;
-//        WeakReference wr = new WeakReference(obj);
-//
-//        obj = null;//等待一段时间，obj对象就会被垃圾回收
-//        if(wr.get() == null){
-//            System.out.println("obj 已经被清除了"+wr.get());
-//        }else{
-//            System.out.println("obj尚未被清除"+wr.get());
-//        }
+        //生产者
+        System.out.println("生产者开始工作------------------");
+        Thread thread1 = new Thread(new Producer(queue,lock,notFull,notEmpty));
+        thread1.start();
+//        Thread thread2 = new Thread(new Producer(queue,lock,notFull,notEmpty));
+//        thread2.start();
+//        Thread.sleep(1000);
+        //消费者
+        System.out.println("消费者开始工作----------------------");
+        Thread thread3 = new Thread(new Consumer(queue,lock,notFull,notEmpty));
+        thread3.start();
+        Thread thread4 = new Thread(new Consumer(queue,lock,notFull,notEmpty));
+        thread4.start();
+        Thread thread5 = new Thread(new Consumer(queue,lock,notFull,notEmpty));
+        thread5.start();
     }
 }

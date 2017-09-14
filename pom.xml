@@ -169,6 +169,12 @@
             <version>2.6</version>
         </dependency>
 
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>2.1.0</version>
+        </dependency>
+
         <!-- jackson begin -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -197,6 +203,13 @@
             <groupId>com.esotericsoftware.kryo</groupId>
             <artifactId>kryo</artifactId>
             <version>2.21</version>
+        </dependency>
+
+        <!-- JSON -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.1.31</version>
         </dependency>
 
         <!-- logging tools  begin -->

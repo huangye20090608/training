@@ -7,7 +7,7 @@ import java.io.*;
  */
 public class BufferStreamDemo {
 
-    public static void main(String agrs[]) throws IOException {
+    public static void main(String args[]) throws IOException {
         FileInputStream fis = null;
         FileOutputStream fos = null;
 
@@ -20,15 +20,17 @@ public class BufferStreamDemo {
             bos = new BufferedOutputStream(fos);
 
             int hasRead = 0;
-            byte[] inputBytes = new byte[32];
-            while((hasRead = bis.read())>0){
+            byte[] inputBytes = new byte[1024];
+            while((hasRead = bis.read(inputBytes))>0){
                 bos.write(inputBytes,0,hasRead);
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }finally {
-            fos.close();
-            fis.close();
+            bos.close();
+            bis.close();
+//            fos.close();
+//            fis.close();
         }
     }
 }
